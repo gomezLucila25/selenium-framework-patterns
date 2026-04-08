@@ -21,6 +21,9 @@ public class LoginPage extends BasePage {
     @FindBy(css = "[data-test='error']")
     private WebElement errorMessage;
 
+    @FindBy(xpath = "//div[@class='login_logo']")
+    private WebElement loginLogo;
+
     public LoginPage open() {
         String url = ConfigProvider.getInstance().getBaseUrl() + URL_PATH;
         log.info("Opening login page: [{}]", url);
@@ -58,5 +61,9 @@ public class LoginPage extends BasePage {
 
     public boolean isErrorDisplayed() {
         return isDisplayed(errorMessage);
+    }
+
+    public String getLoginLogoText() {
+        return getText(loginLogo);
     }
 }

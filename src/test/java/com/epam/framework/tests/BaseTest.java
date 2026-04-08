@@ -6,6 +6,7 @@ import com.epam.framework.model.User;
 import com.epam.framework.pages.LoginPage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -39,5 +40,9 @@ public abstract class BaseTest {
 
     protected User getLockedUser() {
         return new User(config.get("locked.user"), config.getPassword());
+    }
+
+    protected WebDriver getDriver() {
+        return DriverManager.getDriver();
     }
 }

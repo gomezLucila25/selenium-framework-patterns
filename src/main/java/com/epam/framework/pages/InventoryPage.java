@@ -4,6 +4,7 @@ import com.epam.framework.model.Product;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
 
@@ -20,6 +21,9 @@ public class InventoryPage extends BasePage {
 
     @FindBy(css = ".shopping_cart_badge")
     private WebElement cartBadge;
+
+    @FindBy(className = "product_sort_container")
+    private WebElement sortDropdown;
 
     @FindBy(id = "react-burger-menu-btn")
     private WebElement burgerMenuButton;
@@ -78,6 +82,17 @@ public class InventoryPage extends BasePage {
                     return new Product(name, Double.parseDouble(priceText));
                 })
                 .toList();
+    }
+
+    public InventoryPage sortBy(String optionText) {
+        log.info("ACTION sort products by: [{}]", optionText);
+        waitStrategy.waitForClickable(driver, sortDropdown);
+        new Select(sortDropdown).selectByVisibleText(optionText);
+        return this;
+    }
+
+    public String getSelectedSortOption() {
+        return new Select(sortDropdown).getFirstSelectedOption().getText();
     }
 
     public LoginPage logout() {

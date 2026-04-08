@@ -31,18 +31,46 @@ public class CartTest extends BaseTest {
     }
 
     @Story("Cart contents")
-    @Description("Cart page displays the product added from inventory")
+    @Description("Full cart scenario: login, verify page, sort products, add item, navigate to cart and verify contents")
     @Test(groups = {"regression"})
     public void testCartContainsAddedProduct() {
-        log.info("TEST: cart page displays the product that was added");
+        log.info("TEST: full cart scenario — login to cart verification");
 
-        CartPage cartPage = openLoginPage()
-                .loginAs(getStandardUser())
-                .addProductToCart(PRODUCT_NAME)
-                .goToCart()
-                .verifyPageLoaded();
+        // Step 1: Open login page and login
+        InventoryPage inventoryPage = openLoginPage().loginAs(getStandardUser());
 
+        // Step 2: Verify inventory page is loaded
+        inventoryPage.verifyPageLoaded();
+
+        // Step 3: Verify page title
+        assertThat(inventoryPage.getPageTitle()).isEqualTo("Products");
+        log.info("TEST ASSERTION PASSED: inventory page title is 'Products'");
+
+        // Step 4: Verify current URL
+        assertThat(getDriver().getCurrentUrl()).contains("inventory");
+        log.info("TEST ASSERTION PASSED: URL contains 'inventory'");
+
+        // Step 5: Sort products by price (low to high) — uses className locator
+        inventoryPage.sortBy("Price (low to high)");
+        assertThat(inventoryPage.getSelectedSortOption()).isEqualTo("Price (low to high)");
+        log.info("TEST ASSERTION PASSED: sort option applied");
+
+        // Step 6: Add product to cart
+        inventoryPage.addProductToCart(PRODUCT_NAME);
+
+        // Step 7: Verify cart badge shows 1
+        assertThat(inventoryPage.getCartItemCount()).isEqualTo(1);
+        log.info("TEST ASSERTION PASSED: cart badge shows 1 after adding product");
+
+        // Step 8: Navigate to cart page
+        CartPage cartPage = inventoryPage.goToCart();
+        cartPage.verifyPageLoaded();
+
+        // Step 9: Assert exactly 1 item in cart
         assertThat(cartPage.getCartItemCount()).isEqualTo(1);
+        log.info("TEST ASSERTION PASSED: cart page contains 1 item");
+
+        // Step 10: Assert correct product is in cart
         assertThat(cartPage.getCartItemNames()).contains(PRODUCT_NAME);
         log.info("TEST ASSERTION PASSED: cart contains [{}]", PRODUCT_NAME);
     }
